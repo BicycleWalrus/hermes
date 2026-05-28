@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: kubeeye
+  labels:
+    app: kubeeye
+spec:
+  type: ClusterIP
+  selector:
+    app: kubeeye
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
