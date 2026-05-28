@@ -1,0 +1,23 @@
+# Cursor Rules - Secure Go & Kubernetes Development (Codex)
+
+Use these rules to guide all code generation, refactoring, and manifest design in the Hermes repository. This project is developed in Go, compiled to `FROM scratch` containers, and deployed on Kubernetes.
+
+---
+
+## 🚀 Quick Reference Commands
+
+* **PATH**: Prepend `/usr/local/go/bin` to PATH if needed.
+* **Compilation**: `CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o <binary> ./cmd/<app>`
+* **Linting / Vet**: `go fmt ./...` and `go vet ./...`
+* **Test Execution**: `go test ./...`
+
+---
+
+## 🐳 Go & Containerization Rules
+
+1. **Standard Monorepo Layout**: Main entrypoints must reside under `/cmd/<tool-name>`, packages under `/pkg/<lib-name>`, Kubernetes YAMLs under `/deployments`, and Dockerfiles under `/build/`.
+2. **FROM scratch Standard**: Ensure all applications can run in an empty `FROM scratch` container. Enable static linking (`CGO_ENABLED=0`), disable CGO, and ensure CA certificates (`/etc/ssl/certs/ca-certificates.crt`) are copied to the final container stage.
+3. **Least Privilege RBAC**: All cluster-interactive pods must run under explicitly declared, read-only or highly restricted ServiceAccounts, Roles, and RoleBindings. Never request wildcard (`*`) resources or verbs.
+4. **Local Registry**: Target builds for the local private registry (`bchd.registry/`).
+5. **Port Forwarding**: Ensure applications expose port configurations that are compatible with:
+   `kubectl port-forward svc/<service> 2225:80 --address=0.0.0.0`
