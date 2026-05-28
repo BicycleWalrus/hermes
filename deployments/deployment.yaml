@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubeeye
+  labels:
+    app: kubeeye
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kubeeye
+  template:
+    metadata:
+      labels:
+        app: kubeeye
+    spec:
+      serviceAccountName: kubeeye
+      containers:
+        - name: kubeeye
+          image: bchd.registry/kubeeye:v1
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8888
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 65532
+            capabilities:
+              drop:
+                - ALL
